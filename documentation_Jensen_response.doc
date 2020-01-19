@@ -1,0 +1,491 @@
+#####################################################################################
+# Measure H12 in 10KB windows under neutrality for ALL the different demographic models
+####################################################################################
+qsub ~/Jensen_response/scripts/qsub_constNe10e6_theta0
+qsub ~/Jensen_response/scripts/qsub_constNe2.7e6_theta0
+qsub ~/Jensen_response/scripts/qsub_dadi1_theta0
+qsub ~/Jensen_response/scripts/qsub_dadi2_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_bottleneck_mode_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_Harris_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_Harris_theta0_rho5e-7
+#qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_Harris_Nac_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_Garud_2015_theta0
+qsub ~/Jensen_response/scripts/qsub_admixture_bot_mode_Garud_2015_theta0
+qsub ~/Jensen_response/scripts/qsub_Arguello
+
+
+# plot S, Pi, TajD, H12, and H2/H1 for these simulations vs the real data
+python ~/Jensen_response/scripts/plot_original_models.py
+
+# plot long-range LD for these scenarios too
+
+
+#qsub ~/Jensen_response/scripts/qsub_constNe10e6_theta0
+#qsub ~/Jensen_response/scripts/qsub_constNe2.2e6_theta0
+#qsub ~/Jensen_response/scripts/qsub_dadi2_theta0_recoded_MS
+#qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0
+#qsub ~/Jensen_response/scripts/qsub_admixture_mode_rho5e-7_theta0
+#qsub ~/Jensen_response/scripts/qsub_admixture_bottleneck_mode_theta0 # corrected this one
+#qsub_admixture_mode_corrected_theta0
+#qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0_MS
+#qsub_admixture_mode_hardcoded_theta0 
+
+#qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0 #corrected
+#qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0_MS
+
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta0
+
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_outside_95CI_theta0 
+
+### Run for X chr to check against Duchen's posterior ###
+
+qsub ~/Jensen_response/scripts/qsub_admixture_95CI_DuchenRhoTheta_exactLength_theta0_Xchr
+
+qsub ~/Jensen_response/scripts/qsub_admixture_fullPosterior_DuchenRhoTheta_exactLength_theta0_Xchr
+
+
+
+
+##########################################
+# H12 in 10kb windows for hard and soft  #
+# Admixture uniform, Admixture posterior #
+##########################################
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0.01 #corrected
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta10 #corrected
+
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta0.01
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta10
+
+
+##############################################################
+# H12 in 400kb windows for neutrality, hard, and soft sweeps #
+# Admixture uniform, Admixture posterior                     #
+##############################################################
+
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_outside_95CI_theta0_400SNPs 
+
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0_400SNPs #corrected
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta0.01_400SNPs
+qsub ~/Jensen_response/scripts/qsub_admixture_posterior_95CI_theta10_400SNPs
+
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta0_400SNPs
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta0.01_400SNPs
+qsub ~/Jensen_response/scripts/qsub_admixture_uniform_95CI_theta10_400SNPs
+
+qsub ~/Jensen_response/scripts/qsub_admixture_bottleneck_mode_theta0_400SNPs # corrected this one
+
+########################################################################
+# Check if there are 2 entries for Pi output, otherwise discard line:  #
+########################################################################
+
+for file in admixture_bottleneck_mode_neutrality.txt_Pi_S.txt \
+Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S.txt \
+Admixture_posteriorDistn_95CI_rho_5e-9_theta_0.01_selection_True_Pi_S_bps.txt \ Admixture_posteriorDistn_95CI_rho_5e-9_theta_0_selection_False_Pi_S_bps.txt \
+Admixture_posteriorDistn_95CI_rho_5e-9_theta_10_selection_True_Pi_S_bps.txt \
+Admixture_posteriorDistn_outside_95CI_rho_5e-9_theta_0_selection_False_Pi_S_bps.txt \
+Admixture_uniformPrior_rho_5e-9_theta_0.01_selection_True_Pi_S_bps.txt \
+Admixture_uniformPrior_rho_5e-9_theta_0_selection_False_Pi_S_bps.txt \
+Admixture_uniformPrior_rho_5e-9_theta_10_selection_True_Pi_S_bps.txt \
+constNe106_neutrality_Pi_S.txt \
+constNe2.2e6_neutrality_Pi_S.txt \
+dadi1_neutrality_Pi_S.txt \
+dadi2_neutrality_Pi_S.txt \ 
+Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons_DuchenRhoTheta.txt \ 
+Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S_Singletons_DuchenRhoTheta.txt ; do
+
+
+for file in Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt\
+ admixture_bottleneck_mode_neutrality.txt_Pi_S_noSingletons.txt \
+ Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons_DuchenRhoTheta.txt \
+ Admixture_mode_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt \
+ Admixture_posteriorDistn_95CI_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt \
+ Admixture_posteriorDistn_outside_95CI_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt \
+ Admixture_uniformPrior_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt; do 
+
+for file in constNe2.2e6_neutrality_Pi_S.txt dadi1_neutrality_Pi_S.txt dadi2_neutrality_Pi_S.txt; do
+
+for file in Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_Pi_S.txt; do
+
+for file in admixture_bottleneck_mode_corrected_neutrality.txt_Pi_S_noSingletons.txt \
+admixture_bottleneck_mode_corrected_neutrality.txt_Pi_S.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_Pi_S_bps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_Pi_S_noSingletons.txt; do
+    echo $file
+
+    python ~/Jensen_response/scripts/count_fields_Pi_S.py ${file} tmpOut.txt
+
+    mv tmpOut.txt ${file}
+
+done
+#################################
+# check if there are 3 entries  #
+#################################
+
+for file in Admixture_mode_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Pi_S_TajD_noSingletons_DuchenRhoTheta.txt Admixture_mode_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Pi_S_TajD_Singletons_DuchenRhoTheta.txt Admixture_95CI_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Pi_S_TajD_noSingletons_DuchenRhoTheta.txt Admixture_95CI_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Pi_S_TajD_Singletons_DuchenRhoTheta.txt ; do
+
+for file in Admixture_mode_corrected_hardcoded_rho_5e-9_theta_0_selection_False_Pi_S_TajD.txt Admixture_mode_corrected_hardcoded_rho_5e-9_theta_0_selection_False_Pi_S_TajD_noSingletons.txt ; do
+
+for file in Admixture_95CI_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Xchr_Pi_S_TajD_noSingletons_DuchenRhoTheta.txt \
+Admixture_95CI_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Xchr_Pi_S_TajD_Singletons_DuchenRhoTheta.txt \
+Admixture_fullPosterior_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Xchr_Pi_S_TajD_noSingletons_DuchenRhoTheta.txt \
+Admixture_fullPosterior_rho_5e-9_theta_0_selection_False_DuchenRhoTheta_exactLength_Xchr_Pi_S_TajD_Singletons_DuchenRhoTheta.txt; do
+
+for file in Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_Pi_S_TajD_bps.txt Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_Pi_S_TajD_noSingletons.txt Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_Pi_S_TajD_noSingletons.txt Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_Pi_S_TajD.txt; do
+
+for file in admixture_bottleneck_mode_corrected_neutrality.txt_Pi_S_TajD_noSingletons.txt admixture_bottleneck_mode_corrected_neutrality.txt_Pi_S_TajD.txt; do
+
+    python ~/Jensen_response/scripts/count_fields_Pi_S_TajD.py ${file} tmpOut.txt
+
+    mv tmpOut.txt ${file}
+
+done
+
+
+
+##########################################################################
+# Check if there are 17 entries for H12 output, otherwise discard line:  #
+##########################################################################
+
+for file in admixture_bottleneck_mode_neutrality.txt_bps.txt Admixture_mode_rho_5e-9_theta_0_selection_False_bps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_0.01_selection_True_bps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_0.01_selection_True_snps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_0_selection_False_bps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_0_selection_False_snps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_10_selection_True_bps.txt Admixture_posteriorDistn_95CI_rho_5e-9_theta_10_selection_True_snps.txt Admixture_uniformPrior_rho_5e-9_theta_0.01_selection_True_bps.txt Admixture_uniformPrior_rho_5e-9_theta_0.01_selection_True_snps.txt Admixture_uniformPrior_rho_5e-9_theta_0_selection_False_bps.txt Admixture_uniformPrior_rho_5e-9_theta_0_selection_False_snps.txt Admixture_uniformPrior_rho_5e-9_theta_10_selection_True_bps.txt Admixture_uniformPrior_rho_5e-9_theta_10_selection_True_snps.txt constNe106_neutrality_bps.txt 
+
+
+for file in constNe2.2e6_neutrality_bps.txt dadi1_neutrality_bps.txt dadi2_neutrality_bps.txt ; do
+
+for file in admixture_bottleneck_mode_corrected_neutrality.txt_bps.txt \
+Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_bps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0.01_selection_True_bps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0.01_selection_True_snps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_bps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_snps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_10_selection_True_bps.txt \
+Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_10_selection_True_snps.txt; do
+
+
+for file in Admixture_mode_corrected_hardcoded_rho_5e-9_theta_0_selection_False_bps.txt; do
+
+for file in Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_bps.txt Admixture_posteriorDistn_95CI_corrected_rho_5e-9_theta_0_selection_False_snps.txt Admixture_mode_corrected_rho_5e-9_theta_0_selection_False_bps.txt admixture_bottleneck_mode_corrected_neutrality.txt_bps.txt admixture_bottleneck_mode_corrected_neutrality.txt_snps.txt ; do 
+
+    python ~/Jensen_response/scripts/count_fields.py ${file} tmpOut.txt
+    mv tmpOut.txt ${file} 
+
+done 
+
+
+
+for file in Admixture_mode_fixedPopSize_NAm1110000_EUr700000_rho_5e-9_theta_0_selection_False_MS_snps.txt Admixture_mode_fixedPopSize_NAm15984500_EUr700000_rho_5e-9_theta_0_selection_False_MS_snps.txt; do
+
+    python ~/Jensen_response/scripts/count_fields.py ${file} tmpOut.txt
+    mv tmpOut.txt ${file}     
+done
+
+
+
+#compute Bayes factors
+num_sims=16000
+for win_type in bps snps; do
+    for model in posteriorDistn_95CI uniformPrior; do
+
+    hard_in=~/Jensen_response/analysis/Admixture_${model}_rho_5e-9_theta_0.01_selection_True_${win_type}.txt
+    soft_in=~/Jensen_response/analysis/Admixture_${model}_rho_5e-9_theta_10_selection_True_${win_type}.txt
+    outFile=~/Jensen_response/analysis/Admixture_${model}_rho_5e-9_theta_0.01_theta_10_selection_True_${win_type}_BFs_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile $num_sims
+
+    done
+done
+
+
+
+#longer chromosomes
+#for win_type in snps bps; do
+for win_type in bps; do
+    for num_sims in 100000 16000; do
+    hard_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_selection_True_${win_type}.txt
+    soft_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_10_selection_True_${win_type}.txt
+    outFile=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_theta_10_selection_True_${win_type}_BFs_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile $num_sims
+    done
+done
+
+
+
+for win_type in bps; do
+    for num_sims in 16000; do
+    hard_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_selection_True_jointDistn_${win_type}.txt
+    soft_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_10_selection_True_jointDistn_${win_type}.txt
+    outFile=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_theta_10_selection_True_jointDistn_${win_type}_BFs_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile $num_sims
+    done
+done
+
+
+for win_type in bps; do
+    for num_sims in 16000; do
+    hard_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_selection_True_mode_${win_type}.txt
+    soft_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_10_selection_True_mode_${win_type}.txt
+    outFile=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_theta_10_selection_True_mode_${win_type}_BFs_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile $num_sims
+    done
+done
+
+
+
+#shorter chromosomes
+for win_type in bps; do
+    for num_sims in 100000 16000; do   
+    hard_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_selection_True_${win_type}_10000bps.txt
+    soft_in=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_10_selection_True_${win_type}_10000bps.txt
+    outFile=~/Jensen_response/analysis/Admixture_rho_5e-9_theta_0.01_theta_10_selection_True_${win_type}_BFs_10000bps_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile ${num_sims}
+    done
+done
+# compute the top 50 peaks H12 and H2/H1 values in fixed 10kb windows
+
+
+while read line; do
+      chr=`echo $line | cut -f1 -d' ' | cut -f2 -d'r'`
+      coord=`echo $line | cut -f2 -d' '`
+      echo $chr
+      echo $coord
+
+      python ~/Jensen_response/scripts/H12_H2H1_fixedWinOption.py /pollard/home/ngarud/westway-home/scalegen/NanditaWork/DGRP_processed/Variants_Sparse_${chr}.sample_swap_fixed_noHeader_noHaps_Ns_noInvariants.txt 145 -o tmp.txt -w 10000 -s $coord -f True 
+      cat tmp.txt >> ~/Jensen_response/analysis/top50peaks_fixed_bp.txt
+
+done < ~/Jensen_response/analysis/peaks_coordinates.txt
+
+
+
+Pi_MS.py
+    H12=`cat Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_H12_command.txt | cut -f1`
+    Nac=`cat Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_H12_command.txt | cut -f2 | cut -f5 -d' '`
+    Nec=`cat Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_H12_command.txt | cut -f2 | cut -f15 -d' '`
+    Nnc=`cat Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_H12_command.txt | cut -f2 | cut -f21 -d' '`
+
+while read line; do
+    H12=`echo $line | cut -f1 -d' '` 
+    Nac=`echo $line | cut -f6 -d' '`
+    Nec=`echo $line | cut -f16 -d' '`
+    Nnc=`echo $line | cut -f22 -d' '`
+    echo -e "$H12\t$Nac\t$Nec\t$Nnc" >> H12_popsize_95.txt
+done <  Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_95CI_H12_command.txt
+
+#Admixture_rho_5e-9_theta_0_selection_False_posteriorDistn_H12_command.txt
+
+
+
+
+##############################################################
+# Run admixture with exact rho, mu, and for the x chr to generate summary statistics for Duchen et al. 
+###########################################
+
+
+
+
+###############
+# experiments #
+###############
+
+#############
+# migration #
+#############
+
+qsub_admixture_mode_theta0_migration_400SNPs
+
+plot_admixture_migration.py
+
+for m_NA in 0 0.1 0.25 0.5 0.75; do
+    
+    file=~/Jensen_response/analysis/Admixture_mode_migration_mNA${m_NA}_mNE${m_NA}_rho_5e-9_theta_0_selection_False_LD_0.05_0.95.txt
+
+    python ~/Jensen_response/scripts/count_fields_any.py $file tmp.txt 8
+
+    # average the simulation results for LD:
+    cat tmp.txt | head -10000000 | sort -k4,4 -g > ~/Jensen_response/analysis/Admixture_mode_migration_mNA${m_NA}_mNE${m_NA}_rho_5e-9_theta_0_selection_False_LD_0.05_0.95_sorted.txt
+
+    python ~/Jensen_response/scripts/averageLD_realData2.py ~/Jensen_response/analysis/Admixture_mode_migration_mNA${m_NA}_mNE${m_NA}_rho_5e-9_theta_0_selection_False_LD_0.05_0.95_sorted.txt ~/Jensen_response/analysis/Admixture_mode_migration_mNA${m_NA}_mNE${m_NA}_rho_5e-9_theta_0_selection_False_LD_0.05_0.95_averaged.txt
+
+done
+
+
+##############################
+# vary admixture proportions #
+##############################
+
+qsub_admixture_mode_theta0_diffProps_400SNPs
+
+plot_admixture_diffProps.py
+
+for prop in 0 0.1 0.25 0.4 0.5 0.75 0.85 0.9; do
+    
+    file=~/Jensen_response/analysis/Admixture_mode_migration_diffProps${prop}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95.txt
+
+    python ~/Jensen_response/scripts/count_fields_any.py $file tmp.txt 8
+
+    # average the simulation results for LD:
+    cat tmp.txt | head -10000000 | sort -k4,4 -g > ~/Jensen_response/analysis/Admixture_mode_migration_diffProps${prop}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt
+
+    python ~/Jensen_response/scripts/averageLD_realData2.py ~/Jensen_response/analysis/Admixture_mode_migration_diffProps${prop}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt ~/Jensen_response/analysis/Admixture_mode_migration_diffProps${prop}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_averaged.txt
+    
+done
+
+
+
+########################## 
+# fixed population sizes #
+##########################
+
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0_fixedPopSize_400SNPs_MS
+
+plot_admixture_fixedPopSize.py
+
+# also test hard vs soft sweeps for fixed sizes (make BF plots)
+
+# scenarios we want: 
+NAm=1110000
+EUr=700000
+
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta10_fixedPopSize_400SNPs_MS 
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0.01_fixedPopSize_400SNPs_MS 
+
+
+# what do the trajectories look like for adaptive mutations
+bash run_admixture_mode_fixedPopSize_400SNPs_MS_trajectory.sh
+
+#plot the trajectories
+python plot_trajectories.py
+
+#try conditoining on the ending frequency of a sweep
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta10_fixedPopSize_400SNPs_MS_conditionEndFreq 
+qsub ~/Jensen_response/scripts/qsub_admixture_mode_theta0.01_fixedPopSize_400SNPs_MS_conditionEndFreq
+
+
+
+#num_sims=20000
+#for NAm in 61659 1110000 15984500; do
+#    for EUr in 500000 2000000; do 
+
+num_sims=100000
+for NAm in 1110000 15984500; do
+    for EUr in 700000; do 
+
+    hard_in=~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_0.01_selection_True_MS_snps.txt
+    soft_in=~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_10_selection_True_MS_snps.txt
+    outFile=~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_BFs_numSim_${num_sims}.txt
+    python ~/Jensen_response/scripts/compute_Bayes_factors.py $hard_in $soft_in $outFile $num_sims
+    done
+done
+
+
+for NAm in 2500 61659 1110000 15984500 28000000; do
+    echo 'NAm'
+    echo $NAm
+    for EUr in 16982 67608 700000 2000000 9550000; do 
+	echo 'EUr'
+	echo $EUr
+
+    file=~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95.txt
+
+    python ~/Jensen_response/scripts/count_fields_any.py $file tmp.txt 8
+
+    # average the simulation results for LD:
+    cat tmp.txt | head -10000000 | sort -k4,4 -g > ~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt
+
+    python ~/Jensen_response/scripts/averageLD_realData2.py ~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt ~/Jensen_response/analysis/Admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_averaged.txt
+
+    done 
+done
+
+
+
+#####################
+# vary growth rates #
+#####################
+
+#qsub_admixture_mode_theta0_varyGrowth_400SNPs_MS
+qsub_admixture_mode_theta0_varyGrowth_400SNPs_MS_for_supp
+
+plot_admixture_varyGrowth.py
+
+for NAm_anc in 2500 61659; do
+    for NAm_cur in 1110000 15984500 28000000; do
+	for EUr_anc in 16982 67608; do
+	    for EUr_cur in 700000 2000000 9550000; do
+    
+    file=~/Jensen_response/analysis/Admixture_mode_varyGrowth_NAm_anc${NAm_anc}_NAm_cur${NAm_cur}_EUr_anc${EUr_anc}_EUr_cur${EUr_cur}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95.txt
+
+    python ~/Jensen_response/scripts/count_fields_any.py $file tmp.txt 8
+
+    # average the simulation results for LD:
+    cat tmp.txt | head -10000000 | sort -k4,4 -g > ~/Jensen_response/analysis/Admixture_mode_varyGrowth_NAm_anc${NAm_anc}_NAm_cur${NAm_cur}_EUr_anc${EUr_anc}_EUr_cur${EUr_cur}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt
+
+    python ~/Jensen_response/scripts/averageLD_realData2.py ~/Jensen_response/analysis/Admixture_mode_varyGrowth_NAm_anc${NAm_anc}_NAm_cur${NAm_cur}_EUr_anc${EUr_anc}_EUr_cur${EUr_cur}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_sorted.txt ~/Jensen_response/analysis/Admixture_mode_varyGrowth_NAm_anc${NAm_anc}_NAm_cur${NAm_cur}_EUr_anc${EUr_anc}_EUr_cur${EUr_cur}_rho_5e-9_theta_0_selection_False_MS_LD_0.05_0.95_averaged.txt
+    
+done
+done
+done
+done
+
+
+
+
+#####################
+# Short intron data #
+#####################
+
+
+# recreate Pi, S, TajD statistics
+# Test out S and Pi in Admixture as compared to the short intron data
+# convert the shortIntronSNPs_noX.txt file format
+#sed '1d' ~/Jensen_response/data/short_introns/shortIntronSNPs_noX.txt > ~/Jensen_response/data/short_introns/tmp.txt
+
+#python ~/Jensen_response/scripts/convertFile.py ~/Jensen_response/data/short_introns/tmp.txt ~/Jensen_response/data/short_introns/shortIntronSNPs_noX_reformatted.txt
+
+#python ~/Jensen_response/scripts/Pi_MS_TajD_perBp.py ~/Jensen_response/data/short_introns/shortIntronSNPs_noX_reformatted.txt ~/Jensen_response/analysis/shortIntronSNPs_S_Pi_TajD_perBp.txt 162 738024
+
+
+python ~/Jensen_response/scripts/DaDi_compute_S_Pi_TajD.py
+
+#################################
+# Get the long range LD working #
+#################################
+
+# Check if there are 8 entries
+for model in admixture_bot_mode admixture_mode admixture_posterior constNe10e6 constNe2.7e6 dadi1 dadi2 admixture_posterior_Harris admixture_mode_Garud2015 admixture_bot_mode_Garud2015 Arguello; do 
+    
+    echo $model
+
+    python ~/Jensen_response/scripts/count_fields_any.py ~/Jensen_response/analysis/${model}_neutrality_locusLen11000_LD_0.05_0.95.txt tmp.txt 8
+
+    # average the simulation results for LD:
+    cat tmp.txt | head -10000000 | sort -k4,4 -g >  ~/Jensen_response/analysis/${model}_neutrality_locusLen11000_LD_0.05_0.95_sorted.txt
+
+    python ~/Jensen_response/scripts/averageLD_realData2.py ~/Jensen_response/analysis/${model}_neutrality_locusLen11000_LD_0.05_0.95_sorted.txt ~/Jensen_response/analysis/${model}_neutrality_locusLen11000_LD_0.05_0.95_averaged.txt
+
+done 
+
+
+###########################
+# Long range LD DGRP data #
+###########################
+cat ~/Jensen_response/analysis/DGRP_LD/DGRP_LD_1000_50_2_2_0_chr2R.txt ~/Jensen_response/analysis/DGRP_LD/DGRP_LD_1000_50_2_2_0_chr2L.txt ~/Jensen_response/analysis/DGRP_LD/DGRP_LD_1000_50_2_2_0_chr3R.txt ~/Jensen_response/analysis/DGRP_LD/DGRP_LD_1000_50_2_2_0_chr3L.txt | sort -k2,2 -g > alldataSorted    
+
+python ~/Jensen_response/scripts/averageLD_realData.py alldataSorted alldata_averaged    
+
+cat alldata_averaged | sort -k1,1 -g > alldata_averaged_sorted 
+
+
+
+
+# to do:
+
+# average long range LD
+# plot long range LD
+
+# plot S, Pi, TajD, H12, and H2/H1
+
+
+
+# Plot hard vs soft sweeps for left over scenarios
+
+# More plots on varying growth rates. 

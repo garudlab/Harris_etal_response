@@ -1,0 +1,35 @@
+#!/bin/bash                         #-- what is the language of this shell
+#                                  #-- Any line that starts with #$ is an instruction to SGE
+#$ -S /bin/bash                     #-- the shell for the job
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l mem_free=1G                  #-- submits on nodes with enough free memory (required)
+#$ -l netapp=1G,scratch=1G         #-- SGE resources (home and scratch disks)
+#$ -l h_rt=10:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-100                        #-- remove first '#' to specify the number of
+                                   #-- tasks if desired (see Tips section)
+
+# reset the mem to 1G
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+rho_in=5e-9  
+adaptive_theta=0.01
+selection=True    
+locusLength=350000
+#locusLength=10000
+
+file=~/Jensen_response/tmp_intermediate_files/Admixture_posteriorDistn_95CI_rho_${rho_in}_theta_${adaptive_theta}_selection_${selection}_snps_tmp_${i}.txt
+
+echo ${file}
+
+#bash ~/Jensen_response/scripts/run_admixture_uniformPrior.sh ${file} $rho_in $adaptive_theta $selection $locusLength
+bash ~/Jensen_response/scripts/run_admixture_posteriorDistn_95CI_400SNPs.sh ${file} $rho_in $adaptive_theta $selection $locusLength
+#bash ~/Jensen_response/scripts/run_admixture_jointDistn.sh ${file} $rho_in $adaptive_theta $selection $locusLength
+#bash ~/Jensen_response/scripts/run_admixture_mode.sh ${file} $rho_in $adaptive_theta $selection $locusLength

@@ -1,0 +1,64 @@
+#!/bin/bash                         #-- what is the language of this shell
+#                                  #-- Any line that starts with #$ is an instruction to SGE
+#$ -S /bin/bash                     #-- the shell for the job
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l mem_free=1G                  #-- submits on nodes with enough free memory (required)
+#$ -l netapp=2G,scratch=1G         #-- SGE resources (home and scratch disks)
+#$ -l h_rt=100:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-300                        #-- remove first '#' to specify the number of
+                                   #-- tasks if desired (see Tips section)
+
+# reset the mem to 1G
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+rho_in=5e-9  
+adaptive_theta=0
+selection=False    
+#locusLength=100000
+locusLength=100000
+
+#NAm=(158 2500 61659 1110000 15984500 28000000)
+
+#NAm=(61659 1110000 15984500 28000000)
+NAm=(61659 15984500 28000000)
+
+EUr=(3801 16982 39000 67608 100000 200000 500000 1000000 2000000 3122470 9550000)
+
+NAm_tot=3
+EUr_tot=11
+
+for ((w = 1; w < NAm_tot; w++)); do
+    for ((j = w; j < NAm_tot; j++)); do
+	NAm_anc=${NAm[$w]}
+	NAm_cur=${NAm[$j]}
+
+	for ((k = 1; k < EUr_tot; k++)); do
+	    for ((l = k; l < EUr_tot; l++)); do
+		EUr_anc=${EUr[$k]}
+		EUr_cur=${EUr[$l]}
+
+		echo 'params:'
+		echo $NAm_anc
+		echo $NAm_cur
+		echo $EUr_anc
+		echo $EUr_cur
+
+		file=/scrapp/ngarud/tmp_intermediate_files/admixture_mode_varyGrowth_NAm_anc${NAm_anc}_NAm_cur${NAm_cur}_EUr_anc${EUr_anc}_EUr_cur${EUr_cur}_tmp_${i}_theta${adaptive_theta}_${selection}_SNPs_MS.txt
+
+		echo ${file}
+
+		bash ~/Jensen_response/scripts/run_admixture_mode_varyGrowth_400SNPs_MS.sh ${file}  $rho_in $adaptive_theta $selection $locusLength $NAm_anc $NAm_cur $EUr_anc $EUr_cur
+
+	    done
+	done
+	
+    done 
+done

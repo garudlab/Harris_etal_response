@@ -1,0 +1,39 @@
+
+#!/bin/bash                         #-- what is the language of this shell
+#                                  #-- Any line that starts with #$ is an instruction to SGE
+#$ -S /bin/bash                     #-- the shell for the job
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l mem_free=1G                  #-- submits on nodes with enough free memory (required)
+#$ -l netapp=1G,scratch=1G         #-- SGE resources (home and scratch disks)
+#$ -l h_rt=70:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-300                        #-- remove first '#' to specify the number of
+                                   #-- tasks if desired (see Tips section)
+
+
+# reset the mem to 1G
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+
+rho_in=5e-9  
+adaptive_theta=0
+selection=False    
+
+model=admixture_mode_Garud2015
+
+#for locusLength in 11000 10000 100000; do
+for locusLength in 100000; do
+
+    file=/scrapp/ngarud/tmp_intermediate_files/${model}_tmp_${i}.txt
+    outFile=~/Jensen_response/analysis/${model}_neutrality_locusLen${locusLength}
+
+    bash ~/Jensen_response/scripts/run_any_model.sh ${model} ${file} $outFile $rho_in $adaptive_theta $selection $locusLength 
+
+done

@@ -1,0 +1,53 @@
+#!/bin/bash                         #-- what is the language of this shell
+#                                  #-- Any line that starts with #$ is an instruction to SGE
+#$ -S /bin/bash                     #-- the shell for the job
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l mem_free=1G                  #-- submits on nodes with enough free memory (required)
+#$ -l netapp=1G,scratch=1G         #-- SGE resources (home and scratch disks)
+#$ -l h_rt=100:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-300                        #-- remove first '#' to specify the number of
+                                   #-- tasks if desired (see Tips section)
+
+# reset the mem to 1G
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+rho_in=5e-9  
+adaptive_theta=0
+selection=False    
+#locusLength=100000
+#locusLength=350000
+
+#for NAm in 158 2500 61659 1110000 15984500 28000000; do
+#    for EUr in 3801 16982 67608 39000 3122470 9550000; do 
+#for NAm in  1110000 15984500 28000000; do
+#    for EUr in 100000 200000 500000 1000000 2000000; do 
+
+for locusLength in 11000 100000; do
+#for locusLength in 100000; do
+
+#    for NAm in 2500 61659 1110000 15984500 28000000; do
+    for NAm in 61659 1110000 15984500; do
+#    for NAm in 28000000; do
+#	for EUr in 16982 67608 500000 1000000 2000000 3122470 9550000; do 
+	#for EUr in 500000 1000000; do
+	for EUr in 700000 600000; do 
+
+	    file=/scrapp/ngarud/tmp_intermediate_files/admixture_mode_fixedPopSize_NAm${NAm}_EUr${EUr}_tmp_${i}_${selection}_SNPs_MS.txt
+	    
+	    echo ${file}
+	
+
+	    bash ~/Jensen_response/scripts/run_admixture_mode_fixedPopSize_400SNPs_MS.sh ${file}  $rho_in $adaptive_theta $selection $locusLength $NAm $EUr
+
+	done
+    done
+
+done
