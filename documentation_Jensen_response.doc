@@ -181,6 +181,16 @@ for file in Admixture_mode_fixedPopSize_NAm1110000_EUr700000_rho_5e-9_theta_0_se
 done
 
 
+for file in Arguello_neutrality_locusLen100000_snps.txt	admixture_posterior_Harris_neutrality_locusLen100000_snps.txt admixture_bot_mode_Garud2015_neutrality_locusLen100000_snps.txt admixture_posterior_neutrality_locusLen100000_snps.txt admixture_bot_mode_neutrality_locusLen100000_snps.txt constNe10e6_neutrality_locusLen100000_snps.txt admixture_mode_Garud2015_neutrality_locusLen100000_snps.txt constNe2.7e6_neutrality_locusLen100000_snps.txt admixture_mode_neutrality_locusLen100000_snps.txt dadi1_neutrality_locusLen100000_snps.txt admixture_posterior_Harris_Nac_neutrality_locusLen100000_snps.txt dadi2_neutrality_locusLen100000_snps.txt; do
+
+    python ~/Jensen_response/scripts/count_fields.py ${file} tmpOut.txt
+    mv tmpOut.txt ${file}     
+done
+
+
+
+
+
 
 #compute Bayes factors
 num_sims=16000

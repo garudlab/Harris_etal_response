@@ -367,7 +367,7 @@ plt.close()
 #########
 
 #################################################
-# make boxplots of the distributions reoriented #
+# make a plot of pi, s, LD                      #
 #################################################
 
 colors=['#fed976','#feb24c', '#fd8d3c','#fc4e2a', '#e31a1c', '#b10026', '#bdd7e7','#6baed6', '#08519c','#8c510a','pink','#d9ef8b', '#66bd63']
@@ -378,24 +378,22 @@ matplotlib.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 
 
 fig_size = plt.rcParams["figure.figsize"]
-fig_size[0] = 9
-fig_size[1] = 18
+fig_size[0] = 6
+fig_size[1] = 6
 
 
 plot_no=1
 for summary_statistic in ['Pi', 'S']:
-    plt.subplot(4,2, plot_no)
+    plt.subplot(2,2, plot_no)
 
     col_i=0
     for model in models:
-        bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+1], sym='.',patch_artist=True, widths=0.5, labels=[''])
-        #patch.set_facecolor(colors[col_i])
-        set_box_color(bp, colors[col_i]) 
+        bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i], sym='.',patch_artist=True, widths=0.5, labels=[''])
+        set_box_color(bp, colors[col_i])
         col_i+=1
     # dummy boxplot to get the colors to work for last one
     bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+10], sym='.',patch_artist=True, widths=0.5, labels=[''])
-    #patch.set_facecolor('white')
-    set_box_color(bp, 'white') 
+    set_box_color(bp, 'white')   
         
     plt.xlim(0,len(models)+2)
 
@@ -466,7 +464,7 @@ for line in inFile:
 
 # plot LD
 for xlim_range in [100,10000]:
-    plt.subplot(4, 2, plot_no)
+    plt.subplot(2, 2, plot_no)
     
     i=0
     for model in models:
@@ -486,12 +484,52 @@ for xlim_range in [100,10000]:
     plot_no +=1
 
 
-############
-# Plot H12 #
-############
+#################
+# print labels  #
+#################
+'''
+print(plot_no)
+plt.subplot(2,2,8)
+# put some text in plot number 6
+plt.text(0.045, 1.0, "DGRP data",  rotation=90.)
+plt.text(0.113, 1.0, "Constant $Ne$=$10^6$",  rotation=90.)
+plt.text(0.18, 1.0, "Constant $Ne$=$2.7*10^6$",  rotation=90.)
+plt.text(0.248, 1.0, "Severe, short bottleneck",  rotation=90.)
+plt.text(0.315, 1.0, "Shallow, long bottleneck",  rotation=90.)
+plt.text(0.383, 1.0, "Admixture (mode), Garud $\it{et al.}$ 2015 implementation",  rotation=90.)
+plt.text(0.45, 1.0, "Admixture + bottleneck (mode), Garud $\it{et al.}$ 2015 implementation",  rotation=90.)
+plt.text(0.518, 1.0, "Admixture (mode), Duchen $\it{et al.}$ 2013",  rotation=90.)
+plt.text(0.585, 1.0, "Admixture + bottleneck (mode), Duchen $\it{et al.}$ 2013",  rotation=90.)
+plt.text(0.653, 1.0, "Admixture (posterior distribution), Duchen $\it{et al.}$ 2013",  rotation=90.)
+plt.text(0.72, 1.0, "Admixture (posterior distribution), Harris $\it{et al.}$ 2018 implementation",  rotation=90.)
+plt.text(0.788, 1.0, "Arguello $\it{et al.}$ 2019",  rotation=90.)
+plt.text(0.856, 1.0, "Admixture, Eur=$7*10^5$, Nac=$1.11*10^6$",  rotation=90.)
+plt.text(0.925, 1.0, "Admixture, Eur=$7*10^5$, Nac=$15.9*10^6$",  rotation=90.)
+'''
+#plt.axis('off')
+
+
+plt.tight_layout()
+
+plt.savefig(os.path.expanduser('~/Jensen_response/analysis/original_models_LD_2.png'), dpi=600)
+
+plt.close()        
+
+
+
+####################
+# Plot H12         #
+####################
+fig_size = plt.rcParams["figure.figsize"]
+fig_size[0] = 5
+fig_size[1] = 9
+
+plot_no=1
+
+# the diff. between H12_1 and H12_2 is that the second one has a zoomed in y-axis 
 
 for summary_statistic in ['H12_1','H12_2']:
-    plt.subplot(4,2, plot_no)
+    plt.subplot(3,1, plot_no)
 
     if summary_statistic=='H12_1':
         summary_statistic='H12'
@@ -539,37 +577,35 @@ for summary_statistic in ['H12_1','H12_2']:
         plt.ylabel('H12 (401 SNP windows)')
 
     plt.axhline(y=data_medians['H12'],linestyle='dashed',color='black', label='Median value in data')
+    plt.axhline(y=min(peaks),color='red', label='Lowest H12 peak value')
 
 
     plot_no +=1
-#################
-# print labels  #
-#################
 
-print(plot_no)
-plt.subplot(4,2,8)
-# put some text in plot number 6
-plt.text(0.045, 1.0, "DGRP data",  rotation=90.)
-plt.text(0.113, 1.0, "Constant $Ne$=$10^6$",  rotation=90.)
-plt.text(0.18, 1.0, "Constant $Ne$=$2.7*10^6$",  rotation=90.)
-plt.text(0.248, 1.0, "Severe, short bottleneck",  rotation=90.)
-plt.text(0.315, 1.0, "Shallow, long bottleneck",  rotation=90.)
-plt.text(0.383, 1.0, "Admixture (mode), Garud $\it{et al.}$ 2015 implementation",  rotation=90.)
-plt.text(0.45, 1.0, "Admixture + bottleneck (mode), Garud $\it{et al.}$ 2015 implementation",  rotation=90.)
-plt.text(0.518, 1.0, "Admixture (mode), Duchen $\it{et al.}$ 2013",  rotation=90.)
-plt.text(0.585, 1.0, "Admixture + bottleneck (mode), Duchen $\it{et al.}$ 2013",  rotation=90.)
-plt.text(0.653, 1.0, "Admixture (posterior distribution), Duchen $\it{et al.}$ 2013",  rotation=90.)
-plt.text(0.72, 1.0, "Admixture (posterior distribution), Harris $\it{et al.}$ 2018 implementation",  rotation=90.)
-plt.text(0.788, 1.0, "Arguello $\it{et al.}$ 2019",  rotation=90.)
-plt.text(0.856, 1.0, "Admixture, Eur=$7*10^5$, Nac=$1.11*10^6$",  rotation=90.)
-plt.text(0.925, 1.0, "Admixture, Eur=$7*10^5$, Nac=$15.9*10^6$",  rotation=90.)
+
+plt.subplot(3,1,3)
+# put some text in plot number 3
+plt.text(-0.03, 1.0, "DGRP data")
+
+plt.text(-0.03, 0.92, "Constant $Ne$=$10^6$")
+plt.text(-0.03, 0.84, "Constant $Ne$=$2.7*10^6$")
+plt.text(-0.03, 0.76, "Severe, short bottleneck")
+plt.text(-0.03, 0.68, "Shallow, long bottleneck")
+plt.text(-0.03, 0.60, "Admixture (mode), Garud $\it{et al.}$ 2015 implementation")
+plt.text(-0.03, 0.52, "Admixture + bottleneck (mode), Garud $\it{et al.}$ 2015 implementation")
+plt.text(-0.03, 0.44, "Admixture (mode), Duchen $\it{et al.}$ 2013")
+plt.text(-0.03, 0.36, "Admixture + bottleneck (mode), Duchen $\it{et al.}$ 2013")
+plt.text(-0.03, 0.28, "Admixture (posterior distribution), Duchen $\it{et al.}$ 2013")
+plt.text(-0.03, 0.20, "Admixture (posterior distribution), Harris $\it{et al.}$ 2018 implementation")
+plt.text(-0.03, 0.12, "Arguello $\it{et al.}$ 2019")
+plt.text(-0.03, 0.04, "Admixture, Eur=$7*10^5$, Nac=$1.11*10^6$")
+plt.text(-0.03, -0.04, "Admixture, Eur=$7*10^5$, Nac=$15.9*10^6$")
 
 plt.axis('off')
 
-
 plt.tight_layout()
 
-plt.savefig(os.path.expanduser('~/Jensen_response/analysis/original_models_LD_2.png'), dpi=600)
+plt.savefig(os.path.expanduser('~/Jensen_response/analysis/H12_plots.png'), dpi=600)
 
 plt.close()        
 
@@ -627,6 +663,9 @@ for model in models:
 
 
 plt.savefig(os.path.expanduser('~/Jensen_response/analysis/tmpFig.png'), dpi=600)
+
+
+
 
 
 '''
