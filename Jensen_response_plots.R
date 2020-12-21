@@ -586,15 +586,23 @@ chr2R_509_low = read.table('H12_scan_10kb_chr2R_rho5e-9_only.txt')
 
 plot(chr3R_509_low[,1], chr3R_509_low[,9], col='grey', pch=20, xlab='position', ylab='H12 measured in 10kb windows', main='Chr3R')
 points(chr3R_509[,1], chr3R_509[,9], pch=20 )
+top_candidates=c(560, 3344, 14136, 16974)
+points(chr3R_509[top_candidates,1], chr3R_509[top_candidates,9], pch=20, col='red' )
 
 plot(chr3L_509_low[,1], chr3L_509_low[,9], col='grey', pch=20, xlab='position', ylab='H12 measured in 10kb windows', main='Chr3L')
+top_candidates=c(4060, 5201, 11537)
 points(chr3L_509[,1], chr3L_509[,9], pch=20 )
+points(chr3L_509[top_candidates,1], chr3L_509[top_candidates,9], pch=20, col='red' )
 
 plot(chr2R_509_low[,1], chr2R_509_low[,9], col='grey', pch=20, xlab='position', ylab='H12 measured in 10kb windows', main='Chr2R')
+top_candidates=c(3188, 6236, 9991,14663)
 points(chr2R_509[,1], chr2R_509[,9], pch=20 )
+points(chr2R_509[top_candidates,1], chr2R_509[top_candidates,9], pch=20, col='red' )
 
 plot(chr2L_509_low[,1], chr2L_509_low[,9], col='grey', pch=20, xlab='position', ylab='H12 measured in 10kb windows', main='Chr2L')
+top_candidates=c(5227,6619,7812,13251,14834)
 points(chr2L_509[,1], chr2L_509[,9], pch=20 )
+points(chr2L_509[top_candidates,1], chr2L_509[top_candidates,9], pch=20, col='red' )
 
 
 #######################################################
@@ -764,7 +772,8 @@ par(mai=c(mb1,ml1,mt1,mr1)) #A numerical vector of the form c(bottom, left, top,
 par(xaxs = "i")
 par(yaxs = "i")
 
-d=read.table("Admixture_mode_fixedPopSize_NAm61659_EUr2000000_rho_5e-9_BFs_numSim_12000.txt")
+#d=read.table("Admixture_mode_fixedPopSize_NAm61659_EUr2000000_rho_5e-9_BFs_numSim_12000.txt")
+d=read.table("Admixture_mode_fixedPopSize_NAm61659_EUr500000_conditionEndFreq_rho_5e-9_BFs_numSim_14000.txt")
 d2=(d[,4])/(d[,3])
 d3=matrix(d2,c(40,40))
 d4=d3[,1:12]
@@ -820,7 +829,7 @@ par(mai=c(mb2,ml2,mt2,mr2)) #A numerical vector of the form c(bottom, left, top,
 par(xaxs = "i")
 par(yaxs = "i")
 
-d=read.table("Admixture_mode_fixedPopSize_NAm61659_EUr500000_rho_5e-9_BFs_numSim_12000.txt")
+d=read.table("Admixture_mode_fixedPopSize_NAm61659_EUr500000_rho_5e-9_BFs_numSim_140000.txt")
 d2=(d[,4])/(d[,3])
 d3=matrix(d2,c(40,40))
 d4=d3[,1:12]
@@ -1100,4 +1109,480 @@ close.screen(all=TRUE)
 
 dev.off() 
 
+
+
+
+#########
+hard=read.table('params_theta_0.01.txt')
+soft=read.table('params_theta_10.txt')
+
+hard_filtered=c()
+for (i in 1:length(hard[,1])){
+	if (hard[i,1]>0 and hard[i,1]<1){
+		hard_filtered=c(hard_filtered,hard[i,1])
+		}	
+	}
+	
+	
+#################################################################
+# Figure 2: recreation of H12 scan from PLOS Genetics paper
+##################################################################
+
+setwd('/Users/nanditagarud/Documents/Ace')
+
+chr3R = read.table('clusters_082712_400_50_2_2_0_chr3R.txt')
+chr3L = read.table('clusters_082712_400_50_2_2_0_chr3L.txt')
+chr2L = read.table('clusters_082712_400_50_2_2_0_chr2L.txt')
+chr2R = read.table('clusters_082712_400_50_2_2_0_chr2R.txt')
+
+chr3R_509 = read.table('clusters_082712_400_50_2_2_0_chr3R_withRho_threshold.txt')
+chr3L_509 = read.table('clusters_082712_400_50_2_2_0_chr3L_withRho_threshold.txt')
+chr2L_509 = read.table('clusters_082712_400_50_2_2_0_chr2L_withRho_threshold.txt')
+chr2R_509 = read.table('clusters_082712_400_50_2_2_0_chr2R_withRho_threshold.txt')
+
+chr3R_peaks = read.table('peaks_082712_400_50_2_2_0_pan_509_top50_Chr3R.txt')
+chr3L_peaks = read.table('peaks_082712_400_50_2_2_0_pan_509_top50_Chr3L.txt')
+chr2L_peaks = read.table('peaks_082712_400_50_2_2_0_pan_509_top50_Chr2L.txt')
+chr2R_peaks = read.table('peaks_082712_400_50_2_2_0_pan_509_top50_Chr2R.txt')
+
+chr3R_overlap = read.table('iHS_scan_DGRPv1/overlap_H12_3R.txt')
+chr3L_overlap = read.table('iHS_scan_DGRPv1/overlap_H12_3L.txt')
+chr2L_overlap = read.table('iHS_scan_DGRPv1/overlap_H12_2L.txt')
+chr2R_overlap = read.table('iHS_scan_DGRPv1/overlap_H12_2R.txt')
+
+
+pdf("Fig_2_scan.pdf",width=6.83,height=4, title = "Figure 6a",paper="special")
+
+s=as.vector(c(2,2))
+split.screen(s)
+
+
+change=0.05
+
+mb1=0.35 
+ml1=0.4 +change
+mt1=0 
+mr1=0.0 +change
+
+mb2=0.35 
+ml2=0.3 +change
+mt2=0 
+mr2=0.1 +change
+
+
+tcl=0.2
+
+pdjy=2
+pdjx=-2.5
+  
+cex1=0.7
+cex2=0.7
+cex3=1
+
+par(cex.axis=cex1) #The magnification to be used for axis annotation relative to the current setting of cex.
+par(cex.lab=cex1) #The magnification to be used for x and y labels relative to the current setting of cex.
+par(omi=c(0.35,0,0.35,0)) #A vector of the form c(bottom, left, top, right) giving the size of the outer margins in inches.
+
+
+shift=200000
+
+#Chr2L
+screen(1)
+par(mai=c(mb1,ml1,mt1,mr1)) #A numerical vector of the form c(bottom, left, top, right) which gives the margin size 
+
+plot(chr2L[,1], chr2L[,26], ylim=c(0,0.27), xlim=c(0,chr2L[length(chr2L[,1]),1] +shift), col="grey",pch=20, xaxs="i",yaxs = "i",axes=F, main='',cex=0.4)
+points(chr2L_509[,3],chr2L_509[,28], col='black', pch=20,cex=0.4)
+points(chr2L_peaks[,3],chr2L_peaks[,28], col='red', pch=20,cex=1)
+points(chr2L_overlap[,7],chr2L_overlap[,4], col='red', pch=20,cex=1)
+abline(h= 0.0170749108205, col='orange', lty=1, lwd=2)
+
+
+axis(1,at=c(0,chr2L[length(chr2L[,1]),1]+shift),labels=F,tcl=0)
+axis(1,at=seq(0,chr2L[length(chr2L[,1]),1],5*10^6),labels=seq(0,chr2L[length(chr2L[,1]),1],5*10^6),padj=pdjx,tcl=-tcl)
+axis(2,at=c(0,0.27),labels=F,tcl=0)
+axis(2,at=seq(0,0.25,0.05),labels=seq(0,0.25,0.05),padj=pdjy,tcl=-tcl)
+axis(3,at=c(0,chr2L[length(chr2L[,1]),1]+shift),labels=F,tcl=0)
+axis(4,at=c(0,0.27),labels=F,tcl=0)
+
+mtext("Chr2L", at=c(1.5*10^6), cex=cex2, padj=2, font=2)
+mtext(expression("H12"),side=2,cex=cex2,padj=-3)
+#mtext(expression(A),at=-10^3,padj=-1,cex=cex3)
+
+
+#Chr2R
+screen(2)
+par(mai=c(mb2,ml2,mt2,mr2)) #A numerical vector of the form c(bottom, left, top, right) which gives the margin size 
+
+plot(chr2R[,1], chr2R[,26], ylim=c(0,0.27), xlim=c(0,chr2R[length(chr2R[,1]),1] +shift), col="grey",pch=20, xaxs="i",yaxs = "i",axes=F, main='',cex=0.4)
+points(chr2R_509[,3],chr2R_509[,28], col='black', pch=20,cex=0.4)
+points(chr2R_peaks[,3],chr2R_peaks[,28], col='red', pch=20,cex=1)
+points(chr2R_overlap[,7],chr2R_overlap[,4], col='red', pch=20,cex=1)
+abline(h= 0.0170749108205, col='orange', lty=1, lwd=2)
+
+axis(1,at=c(0,chr2R[length(chr2R[,1]),1]+shift),labels=F,tcl=0)
+axis(1,at=seq(0,chr2R[length(chr2R[,1]),1],5*10^6),labels=seq(0,chr2R[length(chr2R[,1]),1],5*10^6),padj=pdjx,tcl=-tcl)
+axis(2,at=c(0,0.27),labels=F,tcl=0)
+axis(2,at=seq(0,0.25,0.05),labels=seq(0,0.25,0.05),padj=pdjy,tcl=-tcl)
+axis(3,at=c(0,chr2R[length(chr2R[,1]),1]+shift),labels=F,tcl=0)
+axis(4,at=c(0,0.27),labels=F,tcl=0)
+
+mtext("Chr2R", at=c(1.5*10^6), cex=cex2, padj=2, font=2)
+mtext("Cyp6g1", at=c(8074551), cex=cex2, padj=1.8, font=3)
+
+
+#Chr3L
+screen(3)
+par(mai=c(mb1,ml1,mt1,mr1)) #A numerical vector of the form c(bottom, left, top, right) which gives the margin size 
+
+plot(chr3L[,1], chr3L[,26], ylim=c(0,0.27), xlim=c(0,chr3L[length(chr3L[,1]),1] +shift), col="grey",pch=20, xaxs="i",yaxs = "i",axes=F, main='',cex=0.4)
+points(chr3L_509[,3],chr3L_509[,28], col='black', pch=20,cex=0.4)
+points(chr3L_peaks[,3],chr3L_peaks[,28], col='red', pch=20,cex=1)
+points(chr3L_overlap[,7],chr3L_overlap[,4], col='red', pch=20,cex=1)
+abline(h= 0.0170749108205, col='orange', lty=1, lwd=2)
+
+axis(1,at=c(0,chr3L[length(chr3L[,1]),1]+shift),labels=F,tcl=0)
+axis(1,at=seq(0,chr3L[length(chr3L[,1]),1],5*10^6),labels=seq(0,chr3L[length(chr3L[,1]),1],5*10^6),padj=pdjx,tcl=-tcl)
+axis(2,at=c(0,0.27),labels=F,tcl=0)
+axis(2,at=seq(0,0.25,0.05),labels=seq(0,0.25,0.05),padj=pdjy,tcl=-tcl)
+axis(3,at=c(0,chr3L[length(chr3L[,1]),1]+shift),labels=F,tcl=0)
+axis(4,at=c(0,0.27),labels=F,tcl=0)
+
+mtext("Chr3L", at=c(1.5*10^6), cex=cex2, padj=2, font=2)
+mtext(expression("H12"),side=2,cex=cex2,padj=-3)
+mtext(expression("position"),side=1,cex=cex2,padj=2)
+
+
+
+#Chr3R
+screen(4)
+par(mai=c(mb2,ml2,mt2,mr2)) #A numerical vector of the form c(bottom, left, top, right) which gives the margin size 
+
+plot(chr3R[,1], chr3R[,26], ylim=c(0,0.27), xlim=c(0,chr3R[length(chr3R[,1]),1] +shift), col="grey",pch=20, xaxs="i",yaxs = "i",axes=F, main='',cex=0.4)
+points(chr3R_509[,3],chr3R_509[,28], col='black', pch=20,cex=0.4)
+points(chr3R_peaks[,3],chr3R_peaks[,28], col='red', pch=20,cex=1)
+points(chr3R_overlap[,7],chr3R_overlap[,4], col='red', pch=20,cex=1)
+abline(h= 0.0170749108205, col='orange', lty=1, lwd=2)
+
+axis(1,at=c(0,chr3R[length(chr3R[,1]),1]+shift),labels=F,tcl=0)
+axis(1,at=seq(0,chr3R[length(chr3R[,1]),1],5*10^6),labels=seq(0,chr3R[length(chr3R[,1]),1],5*10^6),padj=pdjx,tcl=-tcl)
+axis(2,at=c(0,0.27),labels=F,tcl=0)
+axis(2,at=seq(0,0.25,0.05),labels=seq(0,0.25,0.05),padj=pdjy,tcl=-tcl)
+axis(3,at=c(0,chr3R[length(chr3R[,1]),1]+shift),labels=F,tcl=0)
+axis(4,at=c(0,0.27),labels=F,tcl=0)
+
+mtext("Chr3R", at=c(2*10^6), cex=cex2, padj=2, font=2)
+mtext(expression("position"),side=1,cex=cex2,padj=2)
+mtext("Ace", at=c(9069408), cex=cex2, padj=2, font=3)
+mtext("CHKov1", at=c(21152026), cex=cex2, padj=2, font=3)
+
+
+
+close.screen(all=TRUE)
+
+dev.off() 
+
+
+
+
+#######################################################################
+# Figure 6                                                            #
+# Haplotype frequency spectra for top 10 peaks   #
+#######################################################################
+
+setwd('/Users/nanditagarud/Documents/Ace')
+
+peaks=read.table('peaks_082712_400_50_2_2_0_pan_509_top50.txt')
+
+pdf("Figure6.pdf",width=4.25,height=4.86, title = "Figure8",paper="special")
+s=as.vector(c(1,10))
+split.screen(s)
+par(omi=c(0.1,0.30,0.15,0.05)) #A vector of the form c(bottom, left, top, right) giving the size of the outer margins in inches.
+
+cex2=0.7
+
+x=1
+screen(x)
+# need to adjust the margins
+par(mai=c(.1,0,.05,0.03))
+
+a1 <- as.character(peaks[x,5]) 
+a2 <- strsplit(a1, ",") 
+a3 <- unlist(a2) 
+hapDist <- as.numeric(a3) 
+
+sampleSize=145
+NumOnes=sampleSize-sum(hapDist)
+wl=0; wr=50;
+
+cols=c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#bc80bd','#ccebc5','#c51b7d','#7fbc41','#f1b6da','#8c510a','#c7eae5','#35978f','#dfc27d','#d6604d')
+
+plot(1:2,1:2,col="white",ylim=c(-1.3,sampleSize),xlim=c(-1,55),ylab="",xlab="",yaxt="n",xaxt="n",frame.plot=FALSE)
+
+for (i in 1: NumOnes){
+	height=c(i-0.35,i+0.35)
+	rect(wl,height[1],wr,height[2],density=-1,col="grey",lwd=0, border='grey')}
+
+print(x)
+colNo=1
+for (j in sort(hapDist)){
+	height=c(height[2]+0.3,height[2]+j)
+	rect(wl,height[1],wr,height[2],density=-1,col=cols[length(hapDist)-colNo+1],lwd=0, border='white')
+	colNo=colNo+1
+	}
+
+# Print H12 and H2/H1 values
+H12=paste(round(peaks[x,28],2))
+H2H1=paste(round(peaks[x,20],2))
+mtext(H12,side=1,cex=cex2,at=30, padj=-3)
+mtext(H2H1,side=1,cex=cex2,at=30, padj=-1.5)
+#mtext(expression(A),at=-20,padj=0,cex=0.9)
+mtext("H12:",side=1,at=-30,padj=-3, cex=cex2)
+mtext("H2/H1:",side=1,at=-22,padj=-1.5, cex=cex2)
+mtext("Cyp6g1",at=20,padj=2, cex=cex2,font=3)
+
+x=2
+screen(x)
+# need to adjust the margins
+par(mai=c(.1,0,.05,0.03))
+
+a1 <- as.character(peaks[x,5]) 
+a2 <- strsplit(a1, ",") 
+a3 <- unlist(a2) 
+hapDist <- as.numeric(a3) 
+
+sampleSize=145
+NumOnes=sampleSize-sum(hapDist)
+wl=0; wr=50;
+
+cols=c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#bc80bd','#ccebc5','#c51b7d','#7fbc41','#f1b6da','#8c510a','#c7eae5','#35978f','#dfc27d','#d6604d')
+
+plot(1:2,1:2,col="white",ylim=c(-1.3,sampleSize),xlim=c(-1,55),ylab="",xlab="",yaxt="n",xaxt="n",frame.plot=FALSE)
+
+for (i in 1: NumOnes){
+	height=c(i-0.35,i+0.35)
+	rect(wl,height[1],wr,height[2],density=-1,col="grey",lwd=0, border='grey')}
+
+print(x)
+colNo=1
+for (j in sort(hapDist)){
+	height=c(height[2]+0.3,height[2]+j)
+	rect(wl,height[1],wr,height[2],density=-1,col=cols[length(hapDist)-colNo+1],lwd=0, border='white')
+	colNo=colNo+1
+	}
+
+# Print H12 and H2/H1 values
+H12=paste(round(peaks[x,28],2))
+H2H1=paste(round(peaks[x,20],2))
+mtext(H12,side=1,cex=cex2,padj=-3)
+mtext(H2H1,side=1,cex=cex2,padj=-1.5)
+mtext("CHKov1",at=27,padj=2, cex=cex2,font=3)
+
+
+x=3
+screen(x)
+# need to adjust the margins
+par(mai=c(.1,0,.05,0.03))
+
+a1 <- as.character(peaks[x,5]) 
+a2 <- strsplit(a1, ",") 
+a3 <- unlist(a2) 
+hapDist <- as.numeric(a3) 
+
+sampleSize=145
+NumOnes=sampleSize-sum(hapDist)
+wl=0; wr=50;
+
+cols=c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#bc80bd','#ccebc5','#c51b7d','#7fbc41','#f1b6da','#8c510a','#c7eae5','#35978f','#dfc27d','#d6604d')
+
+plot(1:2,1:2,col="white",ylim=c(-1.3,sampleSize),xlim=c(-1,55),ylab="",xlab="",yaxt="n",xaxt="n",frame.plot=FALSE)
+
+for (i in 1: NumOnes){
+	height=c(i-0.35,i+0.35)
+	rect(wl,height[1],wr,height[2],density=-1,col="grey",lwd=0, border='grey')}
+
+print(x)
+colNo=1
+for (j in sort(hapDist)){
+	height=c(height[2]+0.3,height[2]+j)
+	rect(wl,height[1],wr,height[2],density=-1,col=cols[length(hapDist)-colNo+1],lwd=0, border='white')
+	colNo=colNo+1
+	}
+
+# Print H12 and H2/H1 values
+H12=paste(round(peaks[x,28],2))
+H2H1=paste(round(peaks[x,20],2))
+mtext(H12,side=1,cex=cex2,padj=-3)
+mtext(H2H1,side=1,cex=cex2,padj=-1.5)
+mtext("Ace",at=25,padj=2, cex=cex2,font=3)
+
+for (x in c(4:10)){
+screen(x)
+# need to adjust the margins
+par(mai=c(.1,0,.05,0.03))
+
+a1 <- as.character(peaks[x,5]) 
+a2 <- strsplit(a1, ",") 
+a3 <- unlist(a2) 
+hapDist <- as.numeric(a3) 
+
+sampleSize=145
+NumOnes=sampleSize-sum(hapDist)
+wl=0; wr=50;
+
+cols=c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#bc80bd','#ccebc5','#c51b7d','#7fbc41','#f1b6da','#8c510a','#c7eae5','#35978f','#dfc27d','#d6604d')
+
+plot(1:2,1:2,col="white",ylim=c(-1.3,sampleSize),xlim=c(-1,55),ylab="",xlab="",yaxt="n",xaxt="n",frame.plot=FALSE)
+
+for (i in 1: NumOnes){
+	height=c(i-0.35,i+0.35)
+	rect(wl,height[1],wr,height[2],density=-1,col="grey",lwd=0, border='grey')}
+
+print(x)
+colNo=1
+for (j in sort(hapDist)){
+	height=c(height[2]+0.3,height[2]+j)
+	rect(wl,height[1],wr,height[2],density=-1,col=cols[length(hapDist)-colNo+1],lwd=0, border='white')
+	colNo=colNo+1
+	}
+
+# Print H12 and H2/H1 values
+H12=paste(round(peaks[x,28],2))
+H2H1=paste(round(peaks[x,20],2))
+mtext(H12,side=1,cex=cex2,padj=-3)
+mtext(H2H1,side=1,cex=cex2,padj=-1.5)
+}
+
+close.screen(all=TRUE)
+dev.off() 
+
+
+#####################################################################
+# Figure S16
+# plot the haplotype spectra for the rest of the top 50 peaks
+#####################################################################
+
+peaks=read.table('peaks_082712_400_50_2_2_0_pan_509_top50.txt')
+
+
+pdf("Figure_S16_b.pdf",width=6.83,height=4.6, title = "HapDist",paper="special")
+s=as.vector(c(1,20))
+split.screen(s)
+par(omi=c(0.1,0.30,0.15,0.05)) #A vector of the form c(bottom, left, top, right) giving the size of the outer margins in inches.
+
+cex2=0.6
+for (x in 31:50){
+#for (x in 11:30){
+#screen(x-10)
+screen(x-30)
+# need to adjust the margins
+par(mai=c(.1,0,.05,0.03))
+
+a1 <- as.character(peaks[x,5]) 
+a2 <- strsplit(a1, ",") 
+a3 <- unlist(a2) 
+hapDist <- as.numeric(a3) 
+
+sampleSize=145
+NumOnes=sampleSize-sum(hapDist)
+wl=0; wr=50;
+
+cols=c('#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#8dd3c7','#bebada','#fb8072','#80b1d3','#fdb462','#b3de69','#fccde5','#bc80bd','#ccebc5','#c51b7d','#7fbc41','#f1b6da','#8c510a','#c7eae5','#35978f','#dfc27d','#d6604d')
+
+plot(1:2,1:2,col="white",ylim=c(-1.3,sampleSize),xlim=c(-1,55),ylab="",xlab="",yaxt="n",xaxt="n",frame.plot=FALSE)
+
+for (i in 1: NumOnes){
+	height=c(i-0.35,i+0.35)
+	rect(wl,height[1],wr,height[2],density=-1,col="grey",lwd=0, border='grey')}
+
+print(x)
+colNo=1
+for (j in sort(hapDist)){
+	height=c(height[2]+0.3,height[2]+j)
+	#rect(wl,height[1],wr,height[2],density=-1,col=cols[floor(height[1])%%15+1],lwd=0, border=cols[floor(height[1])%%15+1])}
+	rect(wl,height[1],wr,height[2],density=-1,col=cols[length(hapDist)-colNo+1],lwd=0, border='white')
+	colNo=colNo+1
+	}
+
+# Print H12 and H2/H1 values
+H12=paste(round(peaks[x,28],2))
+H2H1=paste(round(peaks[x,20],2))
+mtext(H12,side=1,cex=cex2,padj=-2)
+mtext(H2H1,side=1,cex=cex2,padj=-0.5)
+
+}
+#mtext(expression(A),at=-1300,padj=0,cex=0.9)
+mtext(expression(B),at=-1300,padj=0,cex=0.9)
+
+mtext("H12:",side=1,at=-1305,padj=-2, cex=cex2)
+mtext("H2/H1:",side=1,at=-1295,padj=-0.5, cex=cex2)
+
+close.screen(all=TRUE)
+dev.off() 
+
+
+
+################################################################
+# Plot the distribution of H12 values and fit a normal to the bulk (25th-75th percentiles) #
+
+
+setwd("/Users/nanditagarud/Documents/Ace/")
+
+chr3R_509 = read.table('clusters_082712_400_50_2_2_0_chr3R_withRho_threshold.txt')
+chr3L_509 = read.table('clusters_082712_400_50_2_2_0_chr3L_withRho_threshold.txt')
+chr2L_509 = read.table('clusters_082712_400_50_2_2_0_chr2L_withRho_threshold.txt')
+chr2R_509 = read.table('clusters_082712_400_50_2_2_0_chr2R_withRho_threshold.txt')
+h=sort(c(chr3R_509[,28],chr3L_509[,28],chr2R_509[,28],chr2L_509[,28]))
+
+peaks=read.table('peaks_082712_400_50_2_2_0_pan_509_top50.txt')
+
+
+z = hist(h) # or hist(x,plot=FALSE) to avoid the plot of the histogram
+z$density = z$counts/sum(z$counts)*100
+plot(z,freq=FALSE, ylim=c(0,1000))
+curve(dnorm(x,mean=mean(h), sd=sd(h)),add=TRUE, yaxt="n", col='red')
+
+lower=floor(length(h)*0.25)
+upper=floor(length(h)*0.75)
+bulk=h[lower:upper]
+
+curve(dnorm(x,mean=mean(bulk), sd=sd(bulk)),add=TRUE, yaxt="n", col='green')
+
+abline(v=peaks[1,28], col='skyblue')
+abline(v=peaks[50,28], col='skyblue')
+
+##################### 
+# grab points that are within 1SD around the median
+median_val=median(h)
+SD=0.341*median_val 
+upper=median_val+SD
+lower=median_val-SD
+
+distr=h[h<upper]
+standard_dev=sd(distr)
+
+hist(h, breaks=100, main='distribution of H12 scores', ylab='num windows', xlab='H12', col='black')
+abline(v=upper, col='red')
+abline(v=lower, col='red')
+abline(v=median_val+standard_dev, col='skyblue')
+abline(v=median_val-standard_dev, col='skyblue')
+abline(v=median_val+3*standard_dev, col='blue')
+abline(v=median_val-3*standard_dev, col='blue')
+abline(v=median_val+5*standard_dev, col='purple')
+
+abline(v=peaks[1,28], col='gold')
+abline(v=peaks[50,28], col='green')
+
+# what fraction of points lie within 1 sd of the median?
+w=h[lower<h]
+sum(h<upper)/length(h)
+
+# what fraction of points lie within 1sd of the fitted normal?
+w=h[(median_val-1*standard_dev)<h]
+w2=w[w<(median_val+1*standard_dev)]
+length(w2)/length(h)
+
+#qq plot of the w2 distr.
+random_norm=rnorm(length(w2), mean(w2), sd(w2))
+qqplot(w2, random_norm, ylab='Random sample from normal distribution',xlab='H12 values within 1SD of fitted normal distribution', main='Quantile-quantile plot assessing fit of inferred normal distribution to the bulk of the distribution')
+abline(0, 1, col = 'red')
 
