@@ -1,0 +1,36 @@
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l h_data=1G                  #-- submits on nodes with enough free memory (required)
+#$ -l h_rt=23:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-10                        #-- remove first '#' to specify the number of
+#$ -m e                                   #-- tasks if desired (see Tips section)
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7
+
+
+# reset the mem to 1G
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+
+rho_in=5e-9  
+adaptive_theta=0
+selection=False    
+
+locusLength=100 # will be replaced with short intron
+
+model=admixture_posterior
+
+file=/u/scratch/n/ngarud/tmp_intermediate_files/${model}_tmp_${i}.txt
+outFile=~/Jensen_response/analysis/${model}_neutrality_shortIntron
+
+bash ~/Jensen_response/scripts/run_any_model_short_Intron.sh ${model} ${file} $outFile $rho_in $adaptive_theta $selection $locusLength 
+
+done

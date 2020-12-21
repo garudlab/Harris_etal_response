@@ -16,8 +16,17 @@ def count_fields(inFile, outFile):
     for line in inFile:
         line_list = line.split()
         if len(line_list)==4:
-            outFile.write(line)
-            
+            if isfloat(line_list[0]):
+                if float(line_list[0]) <1.0 and float(line_list[0]) > 0.0: 
+                    outFile.write(line)
+
+
+def isfloat(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False            
 ###############
 
 
