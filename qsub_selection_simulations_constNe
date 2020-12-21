@@ -1,0 +1,37 @@
+#$ -o output_error_directory       #-- output directory (fill in)
+#$ -e output_error_directory       #-- error directory (fill in)
+#$ -cwd                            #-- tell the job that it should start in your working directory
+#$ -r y                            #-- tell the system that if a job crashes, it should be restarted
+#$ -j y                            #-- tell the system that the STDERR and STDOUT should be joined
+#$ -l h_data=5G                  #-- submits on nodes with enough free memory (required)
+#$ -l h_rt=23:00:00               #-- runtime limit (see above; this requests 24 hours)
+#$ -t 1-100                        #-- remove first '#' to specify the number of
+#$ -m e                                   #-- tasks if desired (see Tips section)
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7
+
+readarray is < ~/Jensen_response/tmp_intermediate_files/indexes.txt
+
+is=(null ${is[@]}) # this pads the file with an extra line in the beginning. 
+i=${is[$SGE_TASK_ID]}
+echo $i
+
+rho_in=5e-9  
+#adaptive_theta=0.01
+selection=True    
+locusLength=100000
+#locusLength=350000
+#s=0.001
+age_rand=0.0001
+partial_frequency=0.5
+
+for adaptive_theta in 10 0.01; do
+for s in 0 0.0001 0.001 0.005 0.01 0.05 0.1; do
+
+    file=/u/scratch/n/ngarud/tmp_intermediate_files/selection_simulations_constNe_rho_${rho_in}_theta_${adaptive_theta}_selection_${s}_age_${age_rand}_partialfreq_${partial_frequency}_MS_${i}
+    
+    bash ~/Jensen_response/scripts/run_selection_simulations_constNe.sh ${file}  $rho_in $adaptive_theta $selection $locusLength $s $age_rand $partial_frequency
+
+done
+done
