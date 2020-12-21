@@ -193,3 +193,88 @@ done
 # Plotting   #
 ##############
 # plot_original_models.py makes some figures for the paper (e.g. distributions of all statistics for each model), while Jensen_response_publication.R plots others (including the Bayes factor plot).  
+
+######################################################################## 
+# compute S and pi in DGRP data using a sliding window (Genome-wide).  #
+########################################################################
+
+# Real data: S and pi
+# downsample to 130 flies per site. 
+for x in 2L 2R 3L 3R X; do 
+nohup nice python ~/Jensen_response/scripts/SNPdensity.py ~/Jensen_response/data/DGRP_processed/Variants_Sparse_${x}.sample_swap_fixed_noHeader_noHaps_Ns_noInvariants.txt ~/Jensen_response/analysis/S_and_Pi/Chr${x}_SNPdensity.txt &
+done
+
+# highlight with a vertical red line where the positive controls are and state what their values are
+
+
+# compute S and pi with short introns using the same script as above
+for x in 2L 2R 3L 3R X; do    
+cat ~/Jensen_response/data/DGRP_shortIntron/chr${x}_DGRP_shortIntron.txt | cut -f4 > ~/Jensen_response/data/DGRP_shortIntron/chr${x}_DGRP_shortIntron_cut.txt 
+done
+
+
+for x in 2L 2R 3L 3R X; do 
+nohup nice python ~/Jensen_response/scripts/Pi_per_bp.py ~/Jensen_response/data/DGRP_shortIntron/chr${x}_DGRP_shortIntron_cut.txt ~/Jensen_response/analysis/S_and_Pi/Chr${x}_SNPdensity_shortIntron_per_bp.txt &
+done
+
+for x in 2L 2R 3L 3R X; do 
+nohup nice python ~/Jensen_response/scripts/Pi_per_shortIntron.py ~/Jensen_response/data/DGRP_shortIntron/chr${x}_DGRP_shortIntron_cut.txt ~/Jensen_response/analysis/S_and_Pi/Chr${x}_SNPdensity_perShortIntron.txt Chr${x} &
+done
+
+# Compare with distributions of S and Pi in the simulations
+# first, clean out the files so that I have 4 lines 
+
+
+for file in Arguello admixture_bot_mode_Garud2015 admixture_bot_mode admixture_mode_Garud2015 admixture_mode admixture_posterior_Harris_Nac admixture_posterior_Harris admixture_posterior constNe106 constNe10e6 constNe2.7e6 dadi1 dadi2; do
+    
+    python ~/Jensen_response/scripts/count_fields_Pi_S_TajD.py ${file}_neutrality_locusLen11000_Pi_S_TajD_perBp.txt ${file}_neutrality_locusLen11000_Pi_S_TajD_perBp_4Fields.txt
+
+done
+
+for file in Admixture_mode_fixedPopSize_NAm1110000_EUr700000 Admixture_mode_fixedPopSize_NAm15984500_EUr700000; do
+    python ~/Jensen_response/scripts/count_fields_Pi_S_TajD.py ${file}_rho_5e-9_theta_0_selection_False_MS_Pi_S_TajD_perBp.txt ${file}_rho_5e-9_theta_0_selection_False_MS_Pi_S_TajD_perBp_4Fields.txt
+
+done
+
+# generate a list of short intron sizes to match simulations with. 
+python ~/Jensen_response/scripts/compute_short_intron_lengths.py  
+
+
+qsub_constNe10e6_theta0_shortIntron
+qsub_admixture_mode_Garud2015_theta0_shortIntron
+qsub_admixture_bot_mode_Garud2015_theta0_shortIntron
+qsub_admixture_mode_theta0_shortIntron
+qsub_admixture_bot_mode_theta0_shortIntron
+qsub_admixture_posterior_theta0_shortIntron
+qsub_admixture_posterior_Harris_theta0_shortIntron
+qsub_admixture_mode_theta0_fixedPopSize_shortIntron
+
+for file in constNe10e6 constNe2.7e6 dadi1 dadi2 admixture_mode_Garud2015 admixture_bot_mode_Garud2015 admixture_mode admixture_bot_mode admixture_posterior admixture_posterior_Harris Arguello; do    
+    python ~/Jensen_response/scripts/count_fields_Pi_S_TajD.py ${file}_neutrality_shortIntron_Pi_S_TajD_perBp.txt ${file}_neutrality_shortIntron_Pi_S_TajD_perBp_4Fields.txt
+done
+
+for NAm in 1110000 15984500 ; do
+    python ~/Jensen_response/scripts/count_fields_Pi_S_TajD.py Admixture_mode_fixedPopSize_NAm${NAm}_EUr700000_rho_5e-9_theta_0_selection_False_MS_shortIntron_Pi_S_TajD_perBp.txt Admixture_mode_fixedPopSize_NAm${NAm}_EUr700000_rho_5e-9_theta_0_selection_False_MS_shortIntron_Pi_S_TajD_perBp_4Fields.txt 
+done
+
+####################################################################
+# Simulations to show H12 vs H2/H1 in a range of scenarios.        #
+# Figure 6 in the revised manuscript
+####################################################################
+
+python selection_simulations_constNe.py
+run_selection_simulations_constNe.sh
+qsub_selection_simulations_constNe
+
+# average the values of H12 and H2/H1 in different simulations and plot. 
+#check if the files have 17 lines
+file=selection_simulations_constNe_rho_5e-9_theta_0.01_selection_0_age_0.001_partialfreq_0.5_MS_snps.txt
+
+for theta in 0.01 10; do
+    for s in 0 0.0001 0.001 0.005 0.01 0.05 0.1; do
+	file=selection_simulations_constNe_rho_5e-9_theta_${theta}_selection_${s}_age_0_partialfreq_0.5_MS_snps.txt
+	python ~/Jensen_response/scripts/count_fields_any.py $file tmp.txt 17
+	mv tmp.txt $file
+    done
+done
+

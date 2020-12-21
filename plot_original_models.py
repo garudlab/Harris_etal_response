@@ -164,8 +164,9 @@ data_medians['S']=0.0578
 data_medians['Pi']=0.0118
 
 
-# data distribution of H12
-
+# data distribution of S, Pi, and TajD computed from short introns of the DGRP and data distribution of H12 computed from genome-wide DGRP data. 
+DGRP_S=[]
+DGRP_Pi=[]
 DGRP_H12=[]
 for chrom in ['2R','2L','3R','3L']:
     inFile=open(os.path.expanduser('~/Jensen_response/analysis/H12_scan/clusters_082712_400_50_2_2_0_chr%s_withRho_threshold.txt' %(chrom)),'r')
@@ -173,10 +174,23 @@ for chrom in ['2R','2L','3R','3L']:
         items=line.strip().split('\t')
         H12=float(items[27])
         DGRP_H12.append(H12)
+    inFile.close()
 
+    inFile=open(os.path.expanduser('~/Jensen_response/analysis/S_and_Pi/Chr%s_SNPdensity_perShortIntron.txt' %(chrom)),'r')
+    for line in inFile:
+        items=line.strip().split('\t')
+        S=float(items[2])
+        Pi=float(items[3])
+        DGRP_S.append(S)
+        DGRP_Pi.append(Pi)
+    inFile.close()
+
+
+DGRP_S=np.asarray(DGRP_S)
+DGRP_Pi=np.asarray(DGRP_Pi)
 DGRP_H12=np.asarray(DGRP_H12)
+print DGRP_Pi
 
-print len(DGRP_H12)
 
 # read in peaks
 inFile=open(os.path.expanduser('~/Jensen_response/analysis/H12_scan/peaks_082712_400_50_2_2_0_pan_509_top50.txt'),'r')
@@ -228,12 +242,33 @@ for summary_statistic in ['Pi', 'S', 'H12']:
 
         plt.plot( [1]*len(peaks),peaks, 'r.')
 
-    else:
+    elif summary_statistic ==  'Pi':
+        
+        bp = plt.boxplot(DGRP_Pi, positions=[1], sym='.',patch_artist=True, labels=['DGRP'], widths=0.5)
 
+        set_box_color(bp, 'black')
 
         col_i=0
         for model in models:
-            bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+1], sym='.',patch_artist=True, widths=0.5, labels=[''])
+            bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+2], sym='.',patch_artist=True, widths=0.5, labels=[''])
+            #patch.set_facecolor(colors[col_i])
+            set_box_color(bp, colors[col_i]) 
+            col_i+=1
+        # dummy boxplot to get the colors to work for last one
+        bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+10], sym='.',patch_artist=True, widths=0.5, labels=[''])
+        #patch.set_facecolor('white')
+        set_box_color(bp, 'white') 
+        
+        plt.xlim(0,len(models)+2)
+
+    elif summary_statistic ==  'S':
+        
+        bp = plt.boxplot(DGRP_S, positions=[1], sym='.',patch_artist=True, labels=['DGRP'], widths=0.5)
+        set_box_color(bp, 'black')
+
+        col_i=0
+        for model in models:
+            bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+2], sym='.',patch_artist=True, widths=0.5, labels=[''])
             #patch.set_facecolor(colors[col_i])
             set_box_color(bp, colors[col_i]) 
             col_i+=1
@@ -388,7 +423,7 @@ for summary_statistic in ['Pi', 'S']:
 
     col_i=0
     for model in models:
-        bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i], sym='.',patch_artist=True, widths=0.5, labels=[''])
+        bp = plt.boxplot(summary_statistics[model][summary_statistic], positions=[col_i+1], sym='.',patch_artist=True, widths=0.5, labels=[''])
         set_box_color(bp, colors[col_i])
         col_i+=1
     # dummy boxplot to get the colors to work for last one
@@ -668,7 +703,6 @@ plt.savefig(os.path.expanduser('~/Jensen_response/analysis/tmpFig.png'), dpi=600
 
 
 
-'''
 ###############
 ###############
 
@@ -1496,4 +1530,3 @@ supplement_plot_no+=1
 plt.close()
 
 
-'''
